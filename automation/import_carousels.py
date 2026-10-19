@@ -11,7 +11,7 @@ MAX_SIZE = 15 * 1024 * 1024
 MAX_IMAGES = 20
 
 for archive in sorted(INCOMING.glob("*.zip")):
-    match = re.search(r"(2026-10-\\d{2})", archive.stem)
+    match = re.search(r"(2026-10-\d{2})", archive.stem)
     if not match:
         print(f"Skipping {archive.name}: include YYYY-MM-DD in ZIP filename")
         continue
@@ -24,7 +24,7 @@ for archive in sorted(INCOMING.glob("*.zip")):
             if entry.file_size > MAX_SIZE:
                 raise ValueError(f"{entry.filename}: PNG too large")
             data = z.read(entry)
-            if not data.startswith(b"\\x89PNG\\r\\n\\x1a\\n"):
+            if not data.startswith(b"\x89PNG\r\n\x1a\n"):
                 raise ValueError(f"{entry.filename}: invalid PNG signature")
             path = OUT / f"{date}-slide-{i:02d}.png"
             path.write_bytes(data)
