@@ -10,7 +10,7 @@ MAX_SIZE = 15 * 1024 * 1024
 MAX_IMAGES = 20
 
 for archive in sorted(INCOMING.glob("*.zip")):
-    match = re.search(r"(2026-10-\d{2})", archive.stem)
+    match = re.search(r"(2026-(?:10|11)-\d{2})", archive.stem)
     if not match:
         print(f"Skipping {archive.name}: include YYYY-MM-DD in ZIP filename")
         continue
