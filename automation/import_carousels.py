@@ -1,12 +1,11 @@
-"""Import dated PNG carousels from incoming/*.zip into images/2026/10/."""
+"""Import dated PNG carousels from incoming/*.zip into images/2026/MM/."""
 from pathlib import Path
 import re
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 INCOMING = ROOT / "incoming"
-OUT = ROOT / "images" / "2026" / "10"
-OUT.mkdir(parents=True, exist_ok=True)
+OUT = ROOT / "images" / "2026"
 MAX_SIZE = 15 * 1024 * 1024
 MAX_IMAGES = 20
 
@@ -26,6 +25,7 @@ for archive in sorted(INCOMING.glob("*.zip")):
             data = z.read(entry)
             if not data.startswith(b"\x89PNG\r\n\x1a\n"):
                 raise ValueError(f"{entry.filename}: invalid PNG signature")
-            path = OUT / f"{date}-slide-{i:02d}.png"
+            path = OUT / date[5:7] / f"{date}-slide-{i:02d}.png"
+            path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(data)
             print(f"Imported {path.relative_to(ROOT)}")
