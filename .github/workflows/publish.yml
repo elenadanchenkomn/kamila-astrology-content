@@ -1,0 +1,58 @@
+name: Публикация в Instagram и Facebook
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # каждые 15 минут (GitHub может запускать с опозданием на несколько минут)
+  push:
+    paths:
+      - "captions/**"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Тестовый режим: только показать, что будет опубликовано"
+        type: boolean
+        default: true
+      only_key:
+        description: "Опубликовать одну задачу сейчас (key или id), например 2026-11-23-week/love-ig"
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publisher
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests pillow
+      - name: Публикация
+        env:
+          META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          ADMIN_CHAT_ID: ${{ secrets.ADMIN_CHAT_ID }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          ONLY_KEY: ${{ inputs.only_key }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          python automation/publish_queue.py
+      - name: Сохранить, что опубликовано
+        if: always()
+        run: |
+          git add automation/published.json
+          if ! git diff --cached --quiet; then
+            git commit -m "📮 Опубликовано"
+            git pull --rebase
+            git push
+          fi

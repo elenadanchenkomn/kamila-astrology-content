@@ -13,4 +13,6 @@
 3. Получить публичную ссылку `https://raw.githubusercontent.com/elenadanchenkomn/kamila-astrology-content/main/images/YYYY/MM/filename.jpg`.
 4. Передать ссылку, текст, площадку и время публикации в Metricool.
 
+Автопубликация без Metricool — см. `automation/PUBLISHING.md`.
+
 Не добавляйте в репозиторий пароли, API-токены или персональные данные. Астрологические публикации носят развлекательный и рефлексивный характер.

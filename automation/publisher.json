@@ -1,0 +1,7 @@
+{
+ "timezone": "Europe/Moscow",
+ "graph_version": "v23.0",
+ "repo": "elenadanchenkomn/kamila-astrology-content",
+ "max_late_hours": 12,
+ "max_attempts": 3
+}
