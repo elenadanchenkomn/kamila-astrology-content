@@ -1,0 +1,16 @@
+{
+ "publisher": "github",
+ "media_dir": "images/test",
+ "jobs": [
+  {
+   "key": "story-hello-ig",
+   "network": "instagram",
+   "type": "STORY",
+   "date": "2026-11-19T22:11:00+03:00",
+   "media": [
+    "story-hello.png"
+   ],
+   "text": ""
+  }
+ ]
+}
