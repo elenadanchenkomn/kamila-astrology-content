@@ -12,6 +12,10 @@ on:
         description: "Тестовый режим: только показать, что будет опубликовано"
         type: boolean
         default: true
+      check_only:
+        description: "Только проверить токен (ничего не публикуется)"
+        type: boolean
+        default: false
       only_key:
         description: "Опубликовать одну задачу сейчас (key или id), например 2026-11-23-week/love-ig"
         type: string
@@ -43,6 +47,7 @@ jobs:
           ADMIN_CHAT_ID: ${{ secrets.ADMIN_CHAT_ID }}
           DRY_RUN: ${{ inputs.dry_run }}
           ONLY_KEY: ${{ inputs.only_key }}
+          CHECK_ONLY: ${{ inputs.check_only }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"

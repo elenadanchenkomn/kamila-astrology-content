@@ -40,6 +40,7 @@ TOKEN = os.environ.get("META_PAGE_TOKEN", "").strip()
 REPO = os.environ.get("GITHUB_REPOSITORY", CFG.get("repo", "elenadanchenkomn/kamila-astrology-content"))
 DRY_RUN = os.environ.get("DRY_RUN", "").lower() in ("1", "true", "yes")
 ONLY = os.environ.get("ONLY_KEY", "").strip()   # опубликовать одну задачу сейчас (для проверки)
+CHECK = os.environ.get("CHECK_ONLY", "").lower() in ("1", "true", "yes")  # только проверить токен
 
 
 # ---------------- вспомогательное ----------------
@@ -281,7 +282,19 @@ def resolve_ids() -> tuple:
     return page, ig
 
 
+def check():
+    page, ig = resolve_ids()
+    p = api("GET", f"{G}/{page}", params={"fields": "name"})
+    i = api("GET", f"{G}/{ig}", params={"fields": "username,followers_count,media_count"}) if ig else {}
+    lim = api("GET", f"{G}/{ig}/content_publishing_limit", params={"fields": "quota_usage,config"}) if ig else {}
+    print(f"✅ Токен работает. Страница: {p.get('name')} ({page}); Instagram: @{i.get('username')} ({ig}), "
+          f"подписчиков {i.get('followers_count')}, публикаций {i.get('media_count')}; лимит: {lim.get('data')}")
+
+
 def main():
+    if CHECK:
+        check()
+        return
     state = load_state()
     now = datetime.now(TZ)
     max_late = timedelta(hours=CFG.get("max_late_hours", 12))
