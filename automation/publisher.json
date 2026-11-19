@@ -1,7 +1,9 @@
 {
  "timezone": "Europe/Moscow",
- "graph_version": "v23.0",
+ "graph_version": "v25.0",
  "repo": "elenadanchenkomn/kamila-astrology-content",
  "max_late_hours": 12,
- "max_attempts": 3
+ "max_attempts": 3,
+ "page_id": "1369670162899166",
+ "ig_user_id": "17841423702691847"
 }

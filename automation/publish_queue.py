@@ -9,7 +9,7 @@
 Что уже опубликовано — automation/published.json (коммитит сам workflow).
 
 Секреты (Settings → Secrets and variables → Actions):
-  META_PAGE_TOKEN — бессрочный токен страницы Facebook, к которой привязан Instagram (обязательный);
+  META_PAGE_TOKEN — бессрочный токен страницы или пользователя с доступом к странице (обязательный);
   FB_PAGE_ID, IG_USER_ID — по желанию, иначе определяются по токену;
   TELEGRAM_BOT_TOKEN, ADMIN_CHAT_ID — по желанию, для сообщений об ошибках.
 Настройка — automation/PUBLISHING.md.
@@ -266,13 +266,18 @@ def publish_facebook(j: dict, page: str) -> str:
 # ---------------- главное ----------------
 
 def resolve_ids() -> tuple:
-    page = os.environ.get("FB_PAGE_ID", "").strip()
-    ig = os.environ.get("IG_USER_ID", "").strip()
+    """Страница и Instagram. В секрете может лежать токен страницы или бессрочный токен пользователя:
+    во втором случае берём из него токен страницы Камилы (FB_PAGE_ID / page_id в publisher.json)."""
+    global TOKEN
+    page = os.environ.get("FB_PAGE_ID", "").strip() or str(CFG.get("page_id", ""))
+    ig = os.environ.get("IG_USER_ID", "").strip() or str(CFG.get("ig_user_id", ""))
     if not page:
-        page = api("GET", f"{G}/me", params={"fields": "id,name"})["id"]
+        page = api("GET", f"{G}/me", params={"fields": "id"})["id"]
+    info = api("GET", f"{G}/{page}", params={"fields": "access_token,instagram_business_account"})
+    if info.get("access_token"):
+        TOKEN = info["access_token"]
     if not ig:
-        ig = (api("GET", f"{G}/{page}", params={"fields": "instagram_business_account"})
-              .get("instagram_business_account") or {}).get("id", "")
+        ig = (info.get("instagram_business_account") or {}).get("id", "")
     return page, ig
 
 
